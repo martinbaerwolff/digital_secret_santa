@@ -72,7 +72,7 @@ dice_images = []
 people_images_paths = all_file_paths_in_folder(FOLDER_PEOPLE)
 wraps_images_paths = all_file_paths_in_folder(FOLDER_WRAPS)
 gifts_images_paths = all_file_paths_in_folder(FOLDER_GIFTS)
-wrap_status = [False] * len(people_images_paths)
+# wrap_status = [False] * len(people_images_paths)
 
 """
 # Elements: Folder browsing
