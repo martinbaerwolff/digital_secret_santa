@@ -3,7 +3,6 @@ import pathlib
 from PIL import Image, ImageTk
 import io
 import random
-import time
 
 
 FOLDER_PEOPLE = r"C:\Users\Baerwolff\Desktop\code\digital_secret_santa\people"
@@ -133,21 +132,32 @@ text_dice_score = sg.Text(
     font="Any 20",
 )
 button_roll_dice = sg.Button("Roll the dice!", key="button_roll_dice", font="Any 20")
-button_perform = sg.Button("Perform action!", key="button_perform")
+button_change = sg.Button(
+    "Lets change gifts!", key="change", font="Any 20", visible=False
+)
+dummy_text_1 = sg.Text()
+dummy_text_2 = sg.Text()
 
 # Define layout
 layout = [
     [*dice_images],
     [*people_images],
     [*gifts_images],
-    [button_roll_dice, text_dice_score],
+    [dummy_text_1],
+    [button_roll_dice],
+    [text_dice_score],
+    [dummy_text_2],
+    [button_change],
 ]
 
 next = starter
 perform = False
+game_state = "roll dice"
 
 # Build Window
 window = sg.Window("Digital Secret Santa", layout, size=(300, 200), resizable=True)
+
+# Run event loop
 while True:
     event, values = window.read()
     if event == sg.WIN_CLOSED:
@@ -158,12 +168,11 @@ while True:
         )
     elif event == "dummy_gifts_path_input" and values["dummy_gifts_path_input"] != "":
         gifts_images_paths = all_file_paths_in_folder(values["dummy_people_path_input"])
-    elif swap_1 and event.startswith("gift_image_"):
+    elif game_state == "swap part 1" and event.startswith("gift_image_"):
         print("swap 1")
         key_1 = event
-        swap_1 = False
-        swap_2 = True
-    elif swap_2 and event.startswith("gift_image_"):
+        game_state = "swap part 2"
+    elif game_state == "swap part 2" and event.startswith("gift_image_"):
         print("swap 2")
         key_2 = event
         key_1_nr = int(key_1[len("gift_image_") :])
@@ -173,16 +182,20 @@ while True:
             gifts_images_paths[key_1_nr],
         )
         swap_2 = False
-        perform = True
-    elif not swap_1 and not swap_2 and event == "button_roll_dice":
+        game_state = "perform"
+    elif game_state == "roll dice" and event == "button_roll_dice":
         score = roll_dice()
         print(score)
         if score == 1:
             # No action
-            window["text_dice_score"].update("A " + str(score) + " - No action!")
+            game_state = "wait for perform button"
+            window["text_dice_score"].update(
+                str(score) + " - Bad luck, try again next round!"
+            )
+            window["change"].update("Next Player!", visible=True)
         elif score == 2:
             # Swap gifts with person of your choice
-            swap_1 = True
+            game_state = "swap part 1"
             print("Swap gifts with person of your choice")
             window["text_dice_score"].update(
                 str(score) + " - Swap gifts with person of your choice!"
@@ -190,22 +203,24 @@ while True:
         elif score == 3:
             # Everyone passes gifts to the left
             gifts_images_paths = gifts_images_paths[1:] + [gifts_images_paths[0]]
-            perform = True
+            game_state = "wait for perform button"
             print("Everyone passes gifts to the left")
             window["text_dice_score"].update(
                 str(score) + " - Everyone passes gifts to the left!"
             )
+            window["change"].update("Pass gifts to the left!", visible=True)
         elif score == 4:
             # Everyone passes gifts to the right
             gifts_images_paths = [gifts_images_paths[-1]] + gifts_images_paths[:-1]
-            perform = True
+            game_state = "wait for perform button"
             print("Everyone passes gifts to the right")
             window["text_dice_score"].update(
                 str(score) + " - Everyone passes gifts to the right!"
             )
+            window["change"].update("Pass gifts to the right!", visible=True)
         elif score == 5:
             # The two people sitting next to you must swap their gifts
-            swap_1 = True
+            game_state = "swap part 1"
             print("The two people sitting next to you must swap their gifts")
             window["text_dice_score"].update(
                 str(score)
@@ -213,13 +228,14 @@ while True:
             )
         elif score == 6:
             # Two people of your choice must swap their gifts
-            swap_1 = True
+            game_state = "swap part 1"
             print("Two people of your choice must swap their gifts")
             window["text_dice_score"].update(
                 str(score) + " - Two people of your choice must swap their gifts!"
             )
-    if perform:
-        time.sleep(1)
+    elif event == "change":
+        game_state = "perform"
+    if game_state == "perform":
         for j, gift_image_path in enumerate(gifts_images_paths):
             window["gift_image_" + str(j)].update(
                 data=get_img_data(gift_image_path, first=True)
@@ -236,6 +252,8 @@ while True:
             window["dice_image_" + str(k)].update(
                 data=get_img_data(dice_image_path, first=True)
             )
-        perform = False
+        window["change"].update("Currently no actions to perform!", visible=False)
+        window["text_dice_score"].update("")
+        game_state = "roll dice"
 
 window.close()
