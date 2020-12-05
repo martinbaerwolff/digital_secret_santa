@@ -11,7 +11,7 @@ FOLDER_GIFTS = r"C:\Users\Baerwolff\Desktop\code\digital_secret_santa\gifts"
 DICE_IMAGE_PATH = r"dice.jpg"
 TRANSPARENT_IMAGE_PATH = r"transparent.png"
 WHITE_IMAGE_PATH = r"white.png"
-MAX_SIZE = 100
+MAX_SIZE = 60
 swap_1 = False
 swap_2 = False
 
