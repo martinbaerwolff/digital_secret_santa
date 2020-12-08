@@ -11,7 +11,7 @@ FOLDER_GIFTS = r"Z:\_Public\Mitarbeiter\Baerwolff\von_Bettina\ivst_schrottwichte
 DICE_IMAGE_PATH = r"dice.jpg"
 TRANSPARENT_IMAGE_PATH = r"transparent.png"
 WHITE_IMAGE_PATH = r"white.png"
-MAX_SIZE = 60
+MAX_SIZE = 180
 swap_1 = False
 swap_2 = False
 
