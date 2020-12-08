@@ -5,13 +5,19 @@ import io
 import random
 
 
-FOLDER_PEOPLE = r"Z:\_Public\Mitarbeiter\Baerwolff\von_Bettina\ivst_schrottwichteln_2020\people"
-FOLDER_WRAPS = r"Z:\_Public\Mitarbeiter\Baerwolff\von_Bettina\ivst_schrottwichteln_2020\wraps"
-FOLDER_GIFTS = r"Z:\_Public\Mitarbeiter\Baerwolff\von_Bettina\ivst_schrottwichteln_2020\gifts"
+FOLDER_PEOPLE = (
+    r"Z:\_Public\Mitarbeiter\Baerwolff\von_Bettina\ivst_schrottwichteln_2020\people"
+)
+FOLDER_WRAPS = (
+    r"Z:\_Public\Mitarbeiter\Baerwolff\von_Bettina\ivst_schrottwichteln_2020\wraps"
+)
+FOLDER_GIFTS = (
+    r"Z:\_Public\Mitarbeiter\Baerwolff\von_Bettina\ivst_schrottwichteln_2020\gifts"
+)
 DICE_IMAGE_PATH = r"dice.jpg"
 TRANSPARENT_IMAGE_PATH = r"transparent.png"
 WHITE_IMAGE_PATH = r"white.png"
-MAX_SIZE = 180
+MAX_SIZE = 175
 swap_1 = False
 swap_2 = False
 
