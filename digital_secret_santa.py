@@ -5,19 +5,13 @@ import io
 import random
 
 
-FOLDER_PEOPLE = (
-    r"Z:\_Public\Mitarbeiter\Baerwolff\von_Bettina\ivst_schrottwichteln_2020\people"
-)
-FOLDER_WRAPS = (
-    r"Z:\_Public\Mitarbeiter\Baerwolff\von_Bettina\ivst_schrottwichteln_2020\wraps"
-)
-FOLDER_GIFTS = (
-    r"Z:\_Public\Mitarbeiter\Baerwolff\von_Bettina\ivst_schrottwichteln_2020\gifts"
-)
+FOLDER_PEOPLE = r"C:\Users\Baerwolff\Desktop\ivst_schrottwichteln_2020\people"
+FOLDER_WRAPS = r"C:\Users\Baerwolff\Desktop\ivst_schrottwichteln_2020\wraps"
+FOLDER_GIFTS = r"C:\Users\Baerwolff\Desktop\ivst_schrottwichteln_2020\gifts"
 DICE_IMAGE_PATH = r"dice.jpg"
 TRANSPARENT_IMAGE_PATH = r"transparent.png"
 WHITE_IMAGE_PATH = r"white.png"
-MAX_SIZE = 175
+MAX_SIZE = 115
 swap_1 = False
 swap_2 = False
 
@@ -30,7 +24,7 @@ def all_file_paths_in_folder(folder_path):
     return file_paths
 
 
-def get_img_data(f, maxsize=(MAX_SIZE, MAX_SIZE), first=False):
+def get_img_data(f, maxsize=(MAX_SIZE, 99999), first=False):
     """Generate image data using PIL
     """
     img = Image.open(f)
@@ -104,19 +98,21 @@ browse_wraps_button = sg.FolderBrowse(
 # Elements: Images
 
 for i, people_image_path in enumerate(people_images_paths):
-    people_image = sg.Image(
-        data=get_img_data(people_image_path, first=True),
-        key="people_image_" + str(i),
-        enable_events=True,
-    )
-    people_images.append(people_image)
+    if "Thumbs.db" not in str(people_image_path):
+        people_image = sg.Image(
+            data=get_img_data(people_image_path, first=True),
+            key="people_image_" + str(i),
+            enable_events=True,
+        )
+        people_images.append(people_image)
 for j, wrap_image_path in enumerate(wraps_images_paths):
-    wrap_image = sg.Image(
-        data=get_img_data(wrap_image_path, first=True),
-        key="wrap_image_" + str(j),
-        enable_events=True,
-    )
-    wraps_images.append(wrap_image)
+    if "Thumbs.db" not in str(wrap_image_path):
+        wrap_image = sg.Image(
+            data=get_img_data(wrap_image_path, first=True),
+            key="wrap_image_" + str(j),
+            enable_events=True,
+        )
+        wraps_images.append(wrap_image)
 
 
 # Elements: Roll the dice
@@ -138,14 +134,65 @@ text_dice_score = sg.Text(
     enable_events=True,
     size=(250, 1),
     justification="left",
-    font="Any 20",
+    font="Any 15",
 )
-button_roll_dice = sg.Button("Roll the dice!", key="button_roll_dice", font="Any 20")
+button_roll_dice = sg.Button("Roll the dice!", key="button_roll_dice", font="Any 15")
 button_change = sg.Button(
-    "Lets change wraps!", key="change", font="Any 20", visible=False
+    "Lets change wraps!", key="change", font="Any 15", visible=False
 )
 dummy_text_1 = sg.Text()
 dummy_text_2 = sg.Text()
+
+FONT_TEXT_SCORE = "Any 8"
+# Elements: Score explanation
+text_score_1 = sg.Text(
+    "1 = Unwrap gift in front of you (for yourself or anyone else; if not done yet)",
+    key="text_score_1",
+    enable_events=True,
+    size=(250, 1),
+    justification="left",
+    font=FONT_TEXT_SCORE,
+)
+text_score_2 = sg.Text(
+    "2 = Swap gifts with person of your choice!",
+    key="text_score_2",
+    enable_events=True,
+    size=(250, 1),
+    justification="left",
+    font=FONT_TEXT_SCORE,
+)
+text_score_3 = sg.Text(
+    "3 = Everyone passes gifts to the left!",
+    key="text_score_3",
+    enable_events=True,
+    size=(250, 1),
+    justification="left",
+    font=FONT_TEXT_SCORE,
+)
+text_score_4 = sg.Text(
+    "4 = Everyone passes gifts to the right!",
+    key="text_score_4",
+    enable_events=True,
+    size=(250, 1),
+    justification="left",
+    font=FONT_TEXT_SCORE,
+)
+text_score_5 = sg.Text(
+    "5 = The two people sitting next to you must swap their gifts!",
+    key="text_score_5",
+    enable_events=True,
+    size=(250, 1),
+    justification="left",
+    font=FONT_TEXT_SCORE,
+)
+text_score_6 = sg.Text(
+    "6 = Two people of your choice must swap their gifts!",
+    key="text_score_6",
+    enable_events=True,
+    size=(250, 1),
+    justification="left",
+    font=FONT_TEXT_SCORE,
+)
 
 # Define layout
 layout = [
@@ -157,6 +204,12 @@ layout = [
     [text_dice_score],
     [dummy_text_2],
     [button_change],
+    [text_score_1],
+    [text_score_2],
+    [text_score_3],
+    [text_score_4],
+    [text_score_5],
+    [text_score_6],
 ]
 
 next = starter
@@ -190,6 +243,10 @@ while True:
             wraps_images_paths[key_2_nr],
             wraps_images_paths[key_1_nr],
         )
+        gifts_images_paths[key_1_nr], gifts_images_paths[key_2_nr] = (
+            gifts_images_paths[key_2_nr],
+            gifts_images_paths[key_1_nr],
+        )
         swap_2 = False
         game_state = "perform"
     elif game_state == "roll dice" and event == "button_roll_dice":
@@ -206,56 +263,61 @@ while True:
                 "Unwrapped? Update image and next Player!", visible=True
             )
             print(str(gifts_images_paths[next - 1].resolve))
+            print(wraps_images_paths)
+            print(gifts_images_paths)
             if "gift" in str(gifts_images_paths[next - 1].resolve):
                 wraps_images_paths[next - 1] = gifts_images_paths[next - 1]
             game_state = "wait for perform button"
         elif score == 2:
-            # Swap wraps with person of your choice
+            # Swap gifts with person of your choice
             game_state = "swap part 1"
-            print("Swap wraps with person of your choice")
+            print("Swap gifts with person of your choice")
             window["text_dice_score"].update(
-                str(score) + " - Swap wraps with person of your choice!"
+                str(score) + " - Swap gifts with person of your choice!"
             )
         elif score == 3:
-            # Everyone passes wraps to the left
+            # Everyone passes gifts to the left
             wraps_images_paths = wraps_images_paths[1:] + [wraps_images_paths[0]]
+            gifts_images_paths = gifts_images_paths[1:] + [gifts_images_paths[0]]
             game_state = "wait for perform button"
-            print("Everyone passes wraps to the left")
+            print("Everyone passes gifts to the left")
             window["text_dice_score"].update(
-                str(score) + " - Everyone passes wraps to the left!"
+                str(score) + " - Everyone passes gifts to the left!"
             )
-            window["change"].update("Pass wraps to the left!", visible=True)
+            window["change"].update("Pass gifts to the left!", visible=True)
         elif score == 4:
-            # Everyone passes wraps to the right
+            # Everyone passes gifts to the right
             wraps_images_paths = [wraps_images_paths[-1]] + wraps_images_paths[:-1]
+            gifts_images_paths = [gifts_images_paths[-1]] + gifts_images_paths[:-1]
             game_state = "wait for perform button"
-            print("Everyone passes wraps to the right")
+            print("Everyone passes gifts to the right")
             window["text_dice_score"].update(
-                str(score) + " - Everyone passes wraps to the right!"
+                str(score) + " - Everyone passes gifts to the right!"
             )
-            window["change"].update("Pass wraps to the right!", visible=True)
+            window["change"].update("Pass gifts to the right!", visible=True)
         elif score == 5:
-            # The two people sitting next to you must swap their wraps
+            # The two people sitting next to you must swap their gifts
             game_state = "swap part 1"
-            print("The two people sitting next to you must swap their wraps")
+            print("The two people sitting next to you must swap their gifts")
             window["text_dice_score"].update(
                 str(score)
-                + " - The two people sitting next to you must swap their wraps!"
+                + " - The two people sitting next to you must swap their gifts!"
             )
         elif score == 6:
-            # Two people of your choice must swap their wraps
+            # Two people of your choice must swap their gifts
             game_state = "swap part 1"
-            print("Two people of your choice must swap their wraps")
+            print("Two people of your choice must swap their gifts")
             window["text_dice_score"].update(
-                str(score) + " - Two people of your choice must swap their wraps!"
+                str(score) + " - Two people of your choice must swap their gifts!"
             )
     elif event == "change":
         game_state = "perform"
     if game_state == "perform":
         for j, wrap_image_path in enumerate(wraps_images_paths):
-            window["wrap_image_" + str(j)].update(
-                data=get_img_data(wrap_image_path, first=True)
-            )
+            if "Thumbs.db" not in str(wraps_images_paths):
+                window["wrap_image_" + str(j)].update(
+                    data=get_img_data(wrap_image_path, first=True)
+                )
         if next < len(wraps_images_paths):
             next += 1
         else:
@@ -276,7 +338,6 @@ window.close()
 
 
 # To Dos
-# - Width of images should be forced to the same for all "columns"
 # - auto full screen
 # - folder browser as prequisite
-# - currently folderfor gifts images has to have the name "gifts"
+# - currently folder for gifts images has to have the name "gifts"
