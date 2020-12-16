@@ -5,9 +5,9 @@ import io
 import random
 
 
-FOLDER_PEOPLE = r"C:\Users\Baerwolff\Desktop\ivst_schrottwichteln_2020\people"
-FOLDER_WRAPS = r"C:\Users\Baerwolff\Desktop\ivst_schrottwichteln_2020\wraps"
-FOLDER_GIFTS = r"C:\Users\Baerwolff\Desktop\ivst_schrottwichteln_2020\gifts"
+FOLDER_PEOPLE = r"people"
+FOLDER_WRAPS = r"wraps"
+FOLDER_GIFTS = r"gifts"
 DICE_IMAGE_PATH = r"dice.jpg"
 TRANSPARENT_IMAGE_PATH = r"transparent.png"
 WHITE_IMAGE_PATH = r"white.png"
